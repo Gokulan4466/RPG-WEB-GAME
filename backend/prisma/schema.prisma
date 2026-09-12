@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String            @id @default(uuid())
+  email        String            @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  character         Character?
+  quests            Quest[]
+  questCompletions  QuestCompletion[]
+  userAchievements  UserAchievement[]
+  inventory         Inventory[]
+  transactions      Transaction[]
+  dailyActivities   DailyActivity[]
+
+  @@map("users")
+}
+
+model Character {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String   @default("Adventurer")
+  level         Int      @default(1)
+  currentXp     Int      @default(0)
+  totalXp       Int      @default(0)
+  gold          Int      @default(50)
+  strength      Int      @default(10)
+  intelligence  Int      @default(10)
+  health        Int      @default(10)
+  discipline    Int      @default(10)
+  creativity    Int      @default(10)
+  charisma      Int      @default(10)
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  lastActiveDate DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("characters")
+}
+
+model Quest {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?
+  category        String   @default("INTELLIGENCE") // STRENGTH, INTELLIGENCE, HEALTH, DISCIPLINE, CREATIVITY, CHARISMA
+  difficulty      String   @default("EASY") // EASY, MEDIUM, HARD, EPIC
+  xpReward        Int
+  goldReward      Int
+  attributeReward Int      @default(1)
+  dueDate         DateTime?
+  status          String   @default("ACTIVE") // ACTIVE, COMPLETED
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+
+  questCompletions QuestCompletion[]
+
+  @@index([userId])
+  @@map("quests")
+}
+
+model QuestCompletion {
+  id          String   @id @default(uuid())
+  questId     String
+  quest       Quest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+  xpGained    Int
+  goldGained  Int
+
+  @@index([userId])
+  @@map("quest_completions")
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  title       String
+  description String
+  icon        String
+  category    String?  // STRENGTH, INTELLIGENCE, HEALTH, etc.
+  reqType     String   // FIRST_QUEST, QUEST_COUNT, CATEGORY_COUNT, STREAK, LEVEL
+  reqValue    Int
+  rewardXp    Int      @default(50)
+  rewardGold  Int      @default(25)
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@map("user_achievements")
+}
+
+model Item {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String
+  category    String   // THEME, FRAME, BADGE, TITLE, EFFECT
+  priceGold   Int
+  icon        String
+  rarity      String   @default("COMMON") // COMMON, RARE, EPIC, LEGENDARY
+
+  inventoryItems Inventory[]
+
+  @@map("items")
+}
+
+model Inventory {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  isEquipped Boolean  @default(false)
+  acquiredAt DateTime @default(now())
+
+  @@unique([userId, itemId])
+  @@index([userId])
+  @@map("inventory")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Int
+  type        String   // QUEST_REWARD, SHOP_PURCHASE
+  description String
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@map("transactions")
+}
+
+model DailyActivity {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       String   // YYYY-MM-DD
+  questCount Int      @default(0)
+  xpEarned   Int      @default(0)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@map("daily_activity")
+}

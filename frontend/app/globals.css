@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #090b11;
+  --foreground: #f8fafc;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom RPG Glassmorphic Panels */
+.glass-panel {
+  background: rgba(18, 22, 41, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-gold {
+  background: rgba(18, 22, 41, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.1);
+}
+
+.glass-panel-purple {
+  background: rgba(18, 22, 41, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.1);
+}
+
+/* RPG Border & Ornament Accents */
+.rpg-border {
+  position: relative;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.rpg-border::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid #fbbf24;
+  border-right: 2px solid #fbbf24;
+}
+
+.rpg-border::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid #fbbf24;
+  border-left: 2px solid #fbbf24;
+}
+
+/* Custom Animated Progress Bar Glow */
+.xp-progress-bar {
+  background: linear-gradient(90deg, #9333ea 0%, #c084fc 50%, #f472b6 100%);
+  box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
+}
+
+.gold-progress-bar {
+  background: linear-gradient(90deg, #d97706 0%, #fbbf24 50%, #fef08a 100%);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090b11;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Focus outline for accessibility */
+*:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
