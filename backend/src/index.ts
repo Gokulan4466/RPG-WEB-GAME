@@ -61,8 +61,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   app.listen(config.port, () => {
-    console.log(`⚔️ LifeRPG Server running on port ${config.port} (${config.nodeEnv})`);
+    console.log(`⚔️ LifeRPG Server running on port ${config.port}`);
   });
 }
+
+export default app;
